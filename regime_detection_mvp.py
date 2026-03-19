@@ -14,9 +14,9 @@ import matplotlib.pyplot as plt
 from hmmlearn import hmm
 
 # downloading
-ticker = "ETERNAL.NS"
-start_date = "2021-01-01"
-end_date = "2026-03-19"
+ticker = "RELIANCE.NS"
+start_date = "2015-01-01"
+end_date = "2025-01-01"
 
 print(f"downloading data for {ticker} from {start_date} ~ ~ ~")
 data = yf.download(ticker, start=start_date, end=end_date)
@@ -25,7 +25,7 @@ print(f"downloaded {len(prices)} days of data")
 
 # verify download
 '''
-print("First 5 rows:")
+print("first 5 rows:")
 print(prices.head())
 '''
 
@@ -56,7 +56,7 @@ print("\ntraining HMM ~ ~ ~")
 model.fit(X)
 print("training completed")
 
-print("\n=== learned model aarameters ===")
+print("\n=== learned model parameters ===")
 print("transition matrix (rows=from state, cols=to state):")
 print(model.transmat_)
 print()
@@ -64,12 +64,12 @@ print()
 for i in range(model.n_components):
     mean = model.means_[i][0]
     std = np.sqrt(model.covars_[i][0][0])
-    print(f"State {i}: mean return = {mean:.2f}%, volatility = {std:.2f}%")
+    print(f"state {i}: mean return = {mean:.2f}%, volatility = {std:.2f}%")
 
 # viterbi algorithm finds the single best state path.
 hidden_states = model.predict(X)
 
-print(f"\nDecoded states for each day (first 10): {hidden_states[:10]}")
+print(f"\ndecoded states for each day (first 10): {hidden_states[:10]}")
 
 # count how many days in each state
 unique, counts = np.unique(hidden_states, return_counts=True)
@@ -106,8 +106,3 @@ ax.legend(loc='upper left')
 
 plt.tight_layout()
 plt.show()
-
-print("\nInterpretation hint:")
-print("- Look at which state has higher volatility (std). That state likely captures turbulent periods.")
-print("- Check if the high-volatility state (red if we set it so) appears during known crises (e.g., March 2020).")
-print("- If states flip too often, the model might be overfitting noise. We can later add smoothing.")
