@@ -1,0 +1,23 @@
+# data parameters
+ticker: 'RELIANCE.NS'       # include .NS for NSE
+start_date: '2015-01-01'    # yyyy-mm-dd
+end_date: '2025-01-01'
+
+# feature engineering
+features:
+  returns: true                   # always include returns
+  rolling_volatility_window: 20                      # rolling volatility window for rolling std (set to null to exclude)
+
+# model parameters
+model:
+  n_states: 2
+  covariance_type: "full"   #full, diag, spherical, tied
+  n_iter: 1000
+  random_state: 42
+
+# visualisation
+plot:
+  figsize: [14,7]
+  colors: ['blue','red']    # for states 0, 1
+  save_figure: true       # to save plot to output/figures
+
