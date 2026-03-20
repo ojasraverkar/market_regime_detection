@@ -13,16 +13,21 @@ def rolling_volatility(returns: pd.Series, window: int = 20) -> pd.Series:
     return returns.rolling(window).std()
 
 def build_feature_matrix(prices: pd.Series, config: dict) ->pd.DataFrame:
-    features = {}
-    returns = log_returns(prices)
-    features['return'] = returns
+    if isinstance(prices, pd.DataFrame):
+        if prices.shape[1] != 1:
+            raise ValueError(f"expected a single price series, got shape {prices.shape}")
+        prices = prices.iloc[:, 0]
+
+    features = []
+    returns = log_returns(prices).rename('return')
+    features.append(returns)
     
-    # rolling velocity
+    # rolling volatility
     vol_window = config['features'].get('rolling_volatility_window')
     if vol_window:
-        vol = rolling_volatility(returns, window=vol_window)
-        features['volatility'] = vol
+        vol = rolling_volatility(returns, window=vol_window).rename('volatility')
+        features.append(vol)
     
-    df = pd.DataFrame(features).dropna()
+    df = pd.concat(features, axis=1).dropna()
     return df
 

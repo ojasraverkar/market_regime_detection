@@ -23,6 +23,12 @@ def print_model_params(model: hmm.GaussianHMM, feature_names: list = None):
     print(model.transmat_)
 
     if feature_names is None:
-        feature_names = [f"feat{i}" for i in range(model.means_.shape(1))]
+        feature_names = [f"feat{i}" for i in range(model.means_.shape[1])]
 
-     
+    print("\nstate means:")
+    for i, means in enumerate(model.means_):
+        print(f" state {i}: "+",".join(f"{name}={val:.2f}" for name, val in zip(feature_names, means)))
+    
+    print("\nstate covariances:")
+    for i, cov in enumerate(model.covars_):
+        print(f" state {i}:\n{cov}")

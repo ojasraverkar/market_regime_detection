@@ -1,7 +1,7 @@
 # data parameters
 ticker: 'RELIANCE.NS'       # include .NS for NSE
 start_date: '2015-01-01'    # yyyy-mm-dd
-end_date: '2025-01-01'
+end_date: '2026-03-19'
 
 # feature engineering
 features:
