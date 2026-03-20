@@ -11,7 +11,7 @@ A Hidden Markov Model (HMM) based regime detection system for Indian equities, w
 
 ## Reports
 - [Full project report (Markdown)](REPORT.md)
-- [PDF version](report.pdf) (if added)
+- [PDF version](report.pdf) 
 
 ## Quick Start
 1. Clone the repository.
