@@ -28,7 +28,7 @@ def main():
         X,
         n_states=model_params['n_states'],
         covariance_type=model_params['covariance_type'],
-        n_iter=1000,
+        n_iter=model_params['n_iter'],
         random_state=model_params['random_state']
     )
     print('HMM training completed')

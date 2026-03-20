@@ -32,3 +32,13 @@ def print_model_params(model: hmm.GaussianHMM, feature_names: list = None):
     print("\nstate covariances:")
     for i, cov in enumerate(model.covars_):
         print(f" state {i}:\n{cov}")
+
+def train_hmm_on_slice(features_slice, n_states, covariance_type, n_iter, random_state):
+    model = hmm.GaussianHMM(
+        n_components=n_states,
+        covariance_type=covariance_type,
+        n_iter=n_iter,
+        random_state=random_state
+    )
+    model.fit(features_slice)
+    return model

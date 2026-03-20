@@ -5,11 +5,17 @@ creates plots
 import matplotlib.pyplot as plt
 import pandas as pd 
 import numpy as np
+from matplotlib.colors import ListedColormap
 
-def plot_regimes(prices:pd.Series, dates: pd.DatetimeIndex, states: np.ndarray, colors: list, title:str, 
-                 figsize: tuple = (14, 7), save_path: str = None):
+def plot_regimes(prices:pd.Series, dates: pd.DatetimeIndex, states: np.ndarray, 
+                 colors: list, title:str, figsize: tuple = (14, 7), 
+                 save_path: str = None):
     fig, ax = plt.subplots(figsize=figsize)
     ax.plot(dates, prices, color = 'black', linewidth = 1, label = 'Price')
+
+    max_state = int(np.max(states)) if len(states) else -1
+    if len(colors) <= max_state:
+        raise ValueError(f"not enough colors for states: need {max_state + 1}, got {len(colors)}")
 
     for i, state in enumerate(states):
         start = dates[i]
@@ -38,7 +44,8 @@ def scatter_features(features: pd.DataFrame, states: np.ndarray, colors: list,
         return
     
     fig, ax = plt.subplots(figsize = (10,6))
-    scatter = ax.scatter(features.iloc[:, 0], features.iloc[:, 1], c=states, cmap='bwr', alpha = 0.6, 
+    scatter = ax.scatter(features.iloc[:, 0], features.iloc[:, 1], c=states, 
+                         cmap=ListedColormap(colors), alpha = 0.6, 
                          edgecolors='k', linewidth = 0.5)
     ax.set_xlabel(features.columns[0])
     ax.set_ylabel(features.columns[1])
