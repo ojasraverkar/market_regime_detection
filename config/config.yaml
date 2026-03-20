@@ -5,19 +5,27 @@ end_date: '2026-03-19'
 
 # feature engineering
 features:
-  returns: true                   # always include returns
-  rolling_volatility_window: 20                      # rolling volatility window for rolling std (set to null to exclude)
+  returns: true
+  rolling_volatility_window: 20    # rolling std window (set to null to exclude)
+  rsi_window: 14                   # RSI window (set to null to exclude)
 
 # model parameters
 model:
   n_states: 3
-  covariance_type: "full"   #full, diag, spherical, tied
+  covariance_type: "full"         # full, diag, spherical, tied
   n_iter: 1000
   random_state: 42
 
 # visualisation
 plot:
-  figsize: [14,7]
-  colors: ['blue','green','red']    # for states 0, 1, 2
-  save_figure: true       # to save plot to output/figures
+  figsize: [14, 7]
+  colors: ['blue', 'green', 'red']
+  save_figure: true
 
+# walk forward
+walk_forward:
+  train_window_days: 1250
+  test_window_days: 20
+  train_windows: [750, 1000, 1250, 1500]
+  thresholds: [0.5, 0.6, 0.7]
+  transaction_cost_bps: 10
