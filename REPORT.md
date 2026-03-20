@@ -43,16 +43,12 @@ The project begins with a single-stock analysis to maintain interpretability and
 The feature matrix is designed to capture three distinct aspects of market behavior:
 
 1. **Log Returns**
-   \[
-   r_t = 100 \cdot \log\left(\frac{P_t}{P_{t-1}}\right)
-   \]
+   Formula: `r_t = 100 * log(P_t / P_(t-1))`  
    Returns capture short-horizon directional movement.
 
 2. **Rolling Volatility**
-   \[
-   \sigma_t = \text{std}(r_{t-w+1}, \dots, r_t)
-   \]
-   where \( w = 20 \) trading days.
+   Formula: `sigma_t = std(r_(t-w+1), ..., r_t)`  
+   where `w = 20` trading days.  
    Volatility captures recent instability in returns.
 
 3. **Relative Strength Index (RSI)**
