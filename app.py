@@ -450,8 +450,10 @@ def choose_model(feature_df: pd.DataFrame, feature_columns: list[str], selected_
 
     if getattr(loaded_model, "n_components", selected_states) != selected_states:
         st.info(
-            f"saved model has {loaded_model.n_components} states. enable retraining to use {selected_states} states live."
+            f"saved model has {loaded_model.n_components} states, so the app is training a fresh {selected_states}-state model for this session."
         )
+        model = train_live_model(feature_df, feature_columns, selected_states, config)
+        return model, {"source": f"auto-trained {selected_states}-state session model", "feature_columns": feature_columns}
 
     metadata["source"] = metadata.get("source", f"loaded from {model_path}")
     metadata["feature_columns"] = model_feature_columns
@@ -490,6 +492,29 @@ def describe_level(rank: int, total: int, low_label: str, mid_label: str, high_l
     return mid_label
 
 
+def market_return_name(return_rank: int, total_states: int) -> str:
+    if total_states <= 2:
+        names = ["Bearish", "Bullish"]
+    elif total_states == 3:
+        names = ["Bearish", "Neutral", "Bullish"]
+    else:
+        names = ["Bearish", "Neutral", "Constructive", "Bullish"]
+    return names[min(return_rank, len(names) - 1)]
+
+
+def market_volatility_name(volatility_rank: int, total_states: int) -> str:
+    if total_states <= 2:
+        return "Volatile" if volatility_rank == total_states - 1 else "Calm"
+
+    return describe_level(volatility_rank, total_states, "Calm", "Moderate", "Volatile")
+
+
+def market_oriented_regime_name(return_rank: int, volatility_rank: int, total_states: int) -> str:
+    return_level = market_return_name(return_rank, total_states)
+    volatility_level = market_volatility_name(volatility_rank, total_states)
+    return f"{return_level} {volatility_level}"
+
+
 def infer_regime_descriptions(feature_df: pd.DataFrame, states: np.ndarray, color_sequence: list[str]):
     summary = feature_df.copy()
     summary["state"] = states
@@ -506,10 +531,17 @@ def infer_regime_descriptions(feature_df: pd.DataFrame, states: np.ndarray, colo
     label_map = {}
     color_map = {}
     for color_rank, state in enumerate(return_order):
-        ret_level = describe_level(return_rank[state], len(return_order), "Weak", "Balanced", "Strong")
-        vol_level = describe_level(volatility_rank[state], len(volatility_order), "Low Vol", "Medium Vol", "High Vol")
-        label_map[state] = f"{ret_level} / {vol_level}"
+        label_map[state] = market_oriented_regime_name(
+            return_rank[state],
+            volatility_rank[state],
+            len(return_order),
+        )
         color_map[state] = color_sequence[color_rank % len(color_sequence)]
+
+    duplicate_counts = pd.Series(label_map.values()).value_counts()
+    for state, label in list(label_map.items()):
+        if duplicate_counts[label] > 1:
+            label_map[state] = f"{label} (State {state})"
 
     return label_map, color_map, state_stats.reset_index()
 
